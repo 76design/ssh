@@ -14,6 +14,8 @@ class Ssh
 
     protected string $pathToPrivateKey = '';
 
+    protected string $extraOptions = '';
+
     protected ?int $port;
 
     protected bool $enableStrictHostChecking = true;
@@ -42,6 +44,13 @@ class Ssh
     public static function create(...$args): self
     {
         return new static(...$args);
+    }
+
+    public function useExtraOptions(string $extraOptions): self
+    {
+        $this->extraOptions = $extraOptions;
+
+        return $this;
     }
 
     public function usePrivateKey(string $pathToPrivateKey): self
@@ -214,6 +223,10 @@ class Ssh
     private function getExtraOptions(): array
     {
         $extraOptions = [];
+
+        if ($this->extraOptions) {
+            $extraOptions[] = $this->extraOptions;
+        }
 
         if ($this->pathToPrivateKey) {
             $extraOptions[] = "-i {$this->pathToPrivateKey}";
